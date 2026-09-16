@@ -66,14 +66,14 @@ export function ActivityForm({ today, initial }: { today: string; initial?: Acti
 
   return (
     <form className="space-y-5" noValidate onSubmit={submit}>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 rounded-3xl bg-white/35 p-4 sm:grid-cols-2 dark:bg-black/10">
         <Field label="Date"><Input name="date" type="date" defaultValue={initial?.date ?? today} /></Field>
         <Field label="Activity"><Input name="activity" placeholder="Running, walking, gym..." defaultValue={initial?.activity} /></Field>
         <Field label="Distance (km)"><Input name="distanceKm" inputMode="decimal" value={distance} onChange={(event) => { setDistance(event.target.value); suggestPace(event.target.value, duration); }} placeholder="5.00" /></Field>
         <Field label="Duration (minutes)"><Input name="durationMinutes" inputMode="numeric" value={duration} onChange={(event) => { setDuration(event.target.value); suggestPace(distance, event.target.value); }} placeholder="30" /></Field>
         <Field label="Pace (mm:ss /km)" className="sm:col-span-2"><Input name="pace" inputMode="numeric" value={pace} onChange={(event) => setPace(event.target.value)} placeholder="06:00" /></Field>
       </div>
-      <Button disabled={pending}>{pending ? <LoaderCircle className="animate-spin" /> : initial ? <Save /> : <Plus />}{pending ? "Saving..." : initial ? "Update" : "Add Activity"}</Button>
+      <Button className="w-full sm:w-auto" disabled={pending}>{pending ? <LoaderCircle className="animate-spin" /> : initial ? <Save /> : <Plus />}{pending ? "Saving..." : initial ? "Update" : "Add Activity"}</Button>
     </form>
   );
 }

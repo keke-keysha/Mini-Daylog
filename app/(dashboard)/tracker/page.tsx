@@ -1,8 +1,11 @@
+import { Activity, ChartNoAxesCombined, Clock3, Footprints, HeartPulse, Plus } from "lucide-react";
+
 import { ActivityChart } from "@/components/tracker/activity-chart";
 import { ActivityForm } from "@/components/tracker/activity-form";
 import { ActivityLog } from "@/components/tracker/activity-log";
 import { TrackerStatusForm } from "@/components/tracker/tracker-status-form";
 import { Card } from "@/components/ui/card";
+import { MetricCard, PageHeading, PastelIcon } from "@/components/ui/presentation";
 import { todayJakarta } from "@/lib/date";
 import { getTrackerData } from "@/lib/data/tracker";
 
@@ -15,12 +18,32 @@ export default async function TrackerPage() {
   const today = todayJakarta();
   return (
     <main className="page-shell">
-      <header className="page-header"><div><p className="eyebrow">Move and recover</p><h1>Tracker</h1></div></header>
-      <Card><h2 className="section-title">Today&apos;s Status</h2><TrackerStatusForm date={today} initialStatus={data.todayStatus} /></Card>
-      <Card><h2 className="section-title">Add Activity</h2><ActivityForm today={today} /></Card>
-      <Card><h2 className="section-title">Activity Chart</h2><ActivityChart data={data.chart} /></Card>
-      <Card><h2 className="section-title">Activity Log</h2><ActivityLog today={today} rows={data.rows} /></Card>
-      <Card><h2 className="section-title">Weekly Summary</h2><div className="grid grid-cols-2 gap-3"><div className="rounded-2xl bg-muted p-4"><p className="text-xs text-muted-foreground">Total Distance</p><p className="mt-1 text-xl font-semibold">{data.weekly.distance.toFixed(2)} km</p></div><div className="rounded-2xl bg-muted p-4"><p className="text-xs text-muted-foreground">Total Duration</p><p className="mt-1 text-xl font-semibold">{durationLabel(data.weekly.duration)}</p></div></div></Card>
+      <PageHeading eyebrow="Move and recover" title="Tracker" description="Keep activity and recovery in one gentle rhythm." />
+      <div className="grid gap-4 xl:grid-cols-12">
+        <Card className="bento-mint border-0 xl:col-span-5">
+          <div className="mb-5 flex items-center gap-3"><PastelIcon icon={HeartPulse} tone="mint" className="bg-daylog-mint-strong" /><div><p className="eyebrow">Check in</p><h2 className="section-title mb-0">Today&apos;s Status</h2></div></div>
+          <TrackerStatusForm date={today} initialStatus={data.todayStatus} />
+        </Card>
+        <Card className="bento-peach border-0 xl:col-span-7">
+          <div className="mb-5 flex items-center gap-3"><PastelIcon icon={Plus} tone="peach" className="bg-daylog-peach-strong" /><div><p className="eyebrow">Log movement</p><h2 className="section-title mb-0">Add Activity</h2></div></div>
+          <ActivityForm today={today} />
+        </Card>
+        <Card className="bento-blue border-0 xl:col-span-8">
+          <div className="mb-2 flex items-center gap-3"><PastelIcon icon={ChartNoAxesCombined} tone="blue" className="bg-daylog-blue-strong" /><div><p className="eyebrow">Your pattern</p><h2 className="section-title mb-0">Activity Chart</h2></div></div>
+          <ActivityChart data={data.chart} />
+        </Card>
+        <Card className="bento-lavender border-0 xl:col-span-4">
+          <div className="mb-5 flex items-center gap-3"><PastelIcon icon={Activity} tone="lavender" className="bg-daylog-lavender-strong" /><div><p className="eyebrow">Last 7 days</p><h2 className="section-title mb-0">Weekly Summary</h2></div></div>
+          <div className="grid grid-cols-2 gap-3 xl:grid-cols-1">
+            <MetricCard icon={Footprints} value={`${data.weekly.distance.toFixed(2)} km`} label="Total Distance" tone="mint" />
+            <MetricCard icon={Clock3} value={durationLabel(data.weekly.duration)} label="Total Duration" tone="yellow" />
+          </div>
+        </Card>
+        <Card className="bento-pink min-w-0 border-0 xl:col-span-12">
+          <div className="mb-5 flex items-center gap-3"><PastelIcon icon={Footprints} tone="pink" className="bg-daylog-pink-strong" /><div><p className="eyebrow">Your movement diary</p><h2 className="section-title mb-0">Activity Log</h2></div></div>
+          <ActivityLog today={today} rows={data.rows} />
+        </Card>
+      </div>
     </main>
   );
 }

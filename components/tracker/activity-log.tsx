@@ -24,15 +24,15 @@ export function ActivityLog({ rows, today }: { rows: Activity[]; today: string }
     toast.success("Activity deleted");
     router.refresh();
   }
-  if (rows.length === 0) return <p className="py-8 text-center text-sm text-muted-foreground">No activity logged yet.</p>;
+  if (rows.length === 0) return <p className="rounded-3xl border border-dashed border-foreground/10 bg-white/30 px-6 py-10 text-center text-sm text-muted-foreground dark:bg-white/[0.03]">No activity logged yet. Add your first activity above.</p>;
   return (
     <div>
-      <div className="mb-4 flex flex-wrap gap-3 text-xs text-muted-foreground"><span className="legend fasting">Fasting</span><span className="legend sick">Sick</span><span className="legend red-day">Red Day</span><span className="legend">Normal</span></div>
-      <div className="overflow-x-auto rounded-2xl border">
-        <table className="w-full min-w-[680px] text-left text-sm"><thead className="bg-muted/70 text-xs text-muted-foreground"><tr>{["Date", "Activity", "Distance", "Duration", "Pace"].map((header) => <th key={header} className="px-4 py-3 font-medium">{header}</th>)}</tr></thead><tbody>
+      <div className="mb-4 flex flex-wrap gap-2 text-xs font-semibold text-muted-foreground"><span className="legend fasting">Fasting</span><span className="legend sick">Sick</span><span className="legend red-day">Red Day</span><span className="legend">Normal</span></div>
+      <div className="overflow-x-auto rounded-3xl bg-white/45 dark:bg-black/10">
+        <table className="w-full min-w-[680px] text-left text-sm"><thead className="bg-white/55 text-xs text-muted-foreground dark:bg-white/5"><tr>{["Date", "Activity", "Distance", "Duration", "Pace"].map((header) => <th key={header} className="px-4 py-3.5 font-bold">{header}</th>)}</tr></thead><tbody>
           {rows.map((row) => {
             const priority = row.isRedDay ? "row-red-day" : row.isSick ? "row-sick" : row.isFasting ? "row-fasting" : "";
-            return <tr key={row.id} className={cn("border-t", priority)}><td className="px-4 py-2"><Modal title={`Edit ${row.activity}`} trigger={<Button variant="ghost" className="-ml-3">{formatDisplayDate(row.date)}</Button>}><ActivityForm today={today} initial={row} /><div className="mt-4"><ConfirmButton title="Delete activity?" description="This activity record will be permanently deleted." action={() => remove(row.id)} /></div></Modal></td><td className="px-4 py-3 font-medium">{row.activity}</td><td className="px-4 py-3">{row.distanceKm == null ? "—" : `${Number(row.distanceKm).toFixed(2)} km`}</td><td className="px-4 py-3">{row.durationMinutes} min</td><td className="px-4 py-3">{pace(row.paceSecondsPerKm)}</td></tr>;
+            return <tr key={row.id} className={cn("border-t border-foreground/5 transition-colors hover:bg-white/50 dark:hover:bg-white/5", priority)}><td className="px-4 py-2.5"><Modal title={`Edit ${row.activity}`} trigger={<Button variant="ghost" className="-ml-3">{formatDisplayDate(row.date)}</Button>}><ActivityForm today={today} initial={row} /><div className="mt-4"><ConfirmButton title="Delete activity?" description="This activity record will be permanently deleted." action={() => remove(row.id)} /></div></Modal></td><td className="px-4 py-4 font-bold">{row.activity}</td><td className="px-4 py-4">{row.distanceKm == null ? "—" : `${Number(row.distanceKm).toFixed(2)} km`}</td><td className="px-4 py-4">{row.durationMinutes} min</td><td className="px-4 py-4">{pace(row.paceSecondsPerKm)}</td></tr>;
           })}
         </tbody></table>
       </div>

@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 import { setTrackerStatus } from "@/actions/tracker";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 type TrackerStatus = {
   isFasting: boolean;
@@ -39,21 +40,21 @@ export function TrackerStatusForm({ date, initialStatus }: { date: string; initi
     <form className="space-y-4" noValidate onSubmit={submit}>
       <div className="grid gap-2 sm:grid-cols-3">
         {statusOptions.map((option) => (
-          <label key={option.key} className="flex min-h-14 cursor-pointer items-center gap-3 rounded-2xl border bg-background px-4 py-3 text-sm transition hover:bg-muted/60">
+          <label key={option.key} className={cn("flex min-h-16 cursor-pointer items-center gap-3 rounded-2xl border-2 border-transparent bg-white/50 px-4 py-3 text-sm transition duration-200 hover:bg-white/75 dark:bg-black/10 dark:hover:bg-black/20", status[option.key] && "border-daylog-mint-strong bg-daylog-mint/80 shadow-sm")}>
             <input
               type="checkbox"
               checked={status[option.key]}
               onChange={(event) => setStatus((current) => ({ ...current, [option.key]: event.target.checked }))}
-              className="size-4 accent-primary"
+              className="size-5 rounded-lg accent-[var(--daylog-mint-ink)]"
             />
             <span>
-              <span className="block font-medium">{option.label}</span>
+              <span className="block font-bold">{option.label}</span>
               <span className="sr-only">{option.description}</span>
             </span>
           </label>
         ))}
       </div>
-      <Button disabled={pending}>
+      <Button className="w-full sm:w-auto" disabled={pending}>
         {pending ? <LoaderCircle className="animate-spin" /> : <Save />}
         {pending ? "Saving..." : "Save Status"}
       </Button>
