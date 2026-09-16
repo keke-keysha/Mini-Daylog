@@ -59,7 +59,7 @@ export function LoginForm() {
   return (
     <form className="space-y-5" noValidate onSubmit={handleSubmit}>
       <div className="space-y-2">
-        <label className="text-sm font-medium" htmlFor="username">Username</label>
+        <label className="text-sm font-bold" htmlFor="username">Username</label>
         <input
           autoComplete="username"
           className="field"
@@ -71,7 +71,7 @@ export function LoginForm() {
         {errors.username && <p className="field-error" id="username-error">{errors.username}</p>}
       </div>
       <div className="space-y-2">
-        <label className="text-sm font-medium" htmlFor="password">Password</label>
+        <label className="text-sm font-bold" htmlFor="password">Password</label>
         <div className="relative">
           <input
             autoComplete="current-password"
@@ -84,7 +84,7 @@ export function LoginForm() {
           />
           <button
             type="button"
-            className="absolute inset-y-0 right-0 grid min-h-11 w-11 place-items-center text-muted-foreground hover:text-foreground"
+            className="absolute inset-y-0 right-0 grid min-h-12 w-12 place-items-center rounded-2xl text-muted-foreground transition hover:bg-daylog-lavender/70 hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/30"
             onClick={() => setShowPassword((value) => !value)}
             aria-label={showPassword ? "Hide password" : "Show password"}
           >
@@ -93,7 +93,7 @@ export function LoginForm() {
         </div>
         {errors.password && <p className="field-error" id="password-error">{errors.password}</p>}
       </div>
-      <Button className="h-11 w-full rounded-xl" disabled={pending} size="lg" type="submit">
+      <Button className="h-12 w-full" disabled={pending} size="lg" type="submit">
         {pending ? <LoaderCircle className="animate-spin" /> : <LogIn />}
         {pending ? "Signing in..." : "Login"}
       </Button>

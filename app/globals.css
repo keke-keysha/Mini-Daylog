@@ -290,6 +290,10 @@
   }
   .sidebar-link svg { @apply size-5; }
   .sidebar-link.is-active { @apply bg-daylog-lavender text-daylog-lavender-ink shadow-sm; }
+  .nav-active-blue { @apply bg-daylog-blue text-daylog-blue-ink; }
+  .nav-active-lavender { @apply bg-daylog-lavender text-daylog-lavender-ink; }
+  .nav-active-peach { @apply bg-daylog-peach text-daylog-peach-ink; }
+  .nav-active-pink { @apply bg-daylog-pink text-daylog-pink-ink; }
 }
 
 * {
