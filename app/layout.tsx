@@ -1,16 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Fredoka, Nunito } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const fredoka = Fredoka({
+  variable: "--font-display",
   subsets: ["latin"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const nunito = Nunito({
+  variable: "--font-body",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -23,11 +25,21 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${fredoka.variable} ${nunito.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="flex min-h-full flex-col">
         {children}
-        <Toaster duration={1500} closeButton={false} richColors position="top-center" />
+        <Toaster
+          duration={1500}
+          closeButton={false}
+          richColors
+          position="top-center"
+          toastOptions={{
+            classNames: {
+              toast: "!rounded-2xl !border-white/60 !bg-card/95 !font-sans !text-foreground !shadow-[0_16px_40px_rgba(62,48,91,0.14)] !backdrop-blur-xl dark:!border-white/10",
+            },
+          }}
+        />
       </body>
     </html>
   );

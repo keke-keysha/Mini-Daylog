@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 export function Field({ label, error, className, children }: { label: string; error?: string; className?: string; children: React.ReactNode }) {
   return (
     <label className={cn("grid gap-2 text-sm font-medium", className)}>
-      <span>{label}</span>
+      <span className="font-bold text-foreground/85">{label}</span>
       {children}
       {error && <span className="field-error">{error}</span>}
     </label>
