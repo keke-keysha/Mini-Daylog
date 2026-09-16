@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Check, LoaderCircle, MoreHorizontal, Pencil, Plus, X } from "lucide-react";
+import { Check, ListChecks, LoaderCircle, MoreHorizontal, Pencil, Plus, X } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
@@ -79,10 +79,11 @@ export function DailyTodos({ date, initialTodos }: { date: string; initialTodos:
 
   return (
     <div>
-      <div className="space-y-2">
+      <div className="space-y-2.5">
+        {todos.length === 0 && <div className="grid min-h-36 place-items-center rounded-[1.4rem] border border-dashed border-daylog-yellow-ink/20 bg-white/30 p-5 text-center dark:bg-white/5"><div><span className="mx-auto grid size-11 place-items-center rounded-2xl bg-white/60 text-daylog-yellow-ink dark:bg-white/10"><ListChecks className="size-5" /></span><p className="mt-3 font-heading text-base font-semibold">A clear little list</p><p className="mt-1 text-xs font-bold text-foreground/50">Add one thing you&apos;d like to finish.</p></div></div>}
         {todos.map((todo) => (
-          <div key={todo.id} className="group flex min-h-11 items-center gap-2 rounded-xl px-2 hover:bg-muted/70">
-            <button type="button" onClick={() => toggle(todo)} className={cn("grid size-7 shrink-0 place-items-center rounded-lg border", todo.isCompleted && "border-primary bg-primary text-primary-foreground")} aria-label={todo.isCompleted ? `Mark ${todo.text} unfinished` : `Mark ${todo.text} finished`} disabled={pending}>
+          <div key={todo.id} className={cn("group flex min-h-14 items-center gap-2 rounded-[1.15rem] bg-white/45 px-3 transition-all hover:-translate-y-0.5 hover:bg-white/70 dark:bg-white/5 dark:hover:bg-white/10", todo.isCompleted && "bg-daylog-mint/55")}>
+            <button type="button" onClick={() => toggle(todo)} className={cn("grid size-8 shrink-0 place-items-center rounded-xl border-2 border-foreground/15 bg-white/55 transition hover:scale-105 focus-visible:ring-3 focus-visible:ring-ring/30 dark:bg-white/10", todo.isCompleted && "border-daylog-mint-ink/20 bg-daylog-mint-strong text-daylog-mint-ink")} aria-label={todo.isCompleted ? `Mark ${todo.text} unfinished` : `Mark ${todo.text} finished`} disabled={pending}>
               {todo.isCompleted && <Check className="size-4" />}
             </button>
             {editingId === todo.id ? (
@@ -92,7 +93,7 @@ export function DailyTodos({ date, initialTodos }: { date: string; initialTodos:
                 <Button size="icon" variant="ghost" type="button" onClick={() => setEditingId(null)} aria-label="Cancel editing"><X /></Button>
               </form>
             ) : (
-              <button type="button" onClick={() => setEditingId(todo.id)} className={cn("min-w-0 flex-1 py-2 text-left text-sm", todo.isCompleted && "text-muted-foreground line-through")}>
+              <button type="button" onClick={() => setEditingId(todo.id)} className={cn("min-w-0 flex-1 py-2 text-left text-sm font-bold", todo.isCompleted && "text-muted-foreground line-through")}>
                 {todo.text}
               </button>
             )}
@@ -111,15 +112,15 @@ export function DailyTodos({ date, initialTodos }: { date: string; initialTodos:
         ))}
       </div>
       {adding ? (
-        <form className="mt-3 flex gap-2" onSubmit={add} noValidate>
+        <form className="mt-3 flex gap-2 rounded-[1.2rem] bg-white/35 p-2 dark:bg-white/5" onSubmit={add} noValidate>
           <Input name="text" placeholder="What needs to be done?" autoFocus />
           <Button disabled={pending} aria-label="Save todo">{pending ? <LoaderCircle className="animate-spin" /> : <Check />}</Button>
           <Button type="button" variant="ghost" size="icon" onClick={() => setAdding(false)} aria-label="Cancel"><X /></Button>
         </form>
       ) : (
-        <Button variant="ghost" className="mt-3 w-full justify-start text-muted-foreground" onClick={() => setAdding(true)}><Plus /> Add todo</Button>
+        <Button variant="ghost" className="mt-3 w-full justify-start border border-dashed border-daylog-yellow-ink/20 bg-white/25 text-daylog-yellow-ink hover:bg-white/55" onClick={() => setAdding(true)}><Plus /> Add todo</Button>
       )}
-      <p className="mt-4 text-right text-xs text-muted-foreground">{complete} / {todos.length} complete</p>
+      <p className="mt-4 text-right text-xs font-extrabold text-foreground/45">{complete} / {todos.length} complete</p>
     </div>
   );
 }
