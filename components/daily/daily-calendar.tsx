@@ -55,7 +55,7 @@ export function DailyCalendar({ firstUsedDate, today, entries }: { firstUsedDate
               </Dialog.Trigger>
               <Dialog.Portal>
                 <Dialog.Overlay className="fixed inset-0 z-50 bg-[#292633]/35 backdrop-blur-sm" />
-                <Dialog.Content className="fixed left-1/2 top-1/2 z-50 w-[min(92vw,500px)] -translate-x-1/2 -translate-y-1/2 rounded-[1.75rem] border border-white/70 bg-background/95 p-6 text-center shadow-[0_28px_80px_rgba(44,38,59,0.22)] backdrop-blur-xl dark:border-white/10">
+                <Dialog.Content className="fixed left-1/2 top-1/2 z-50 max-h-[90dvh] w-[min(92vw,500px)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-[1.75rem] border border-white/70 bg-background/95 p-6 text-center shadow-[0_28px_80px_rgba(44,38,59,0.22)] backdrop-blur-xl dark:border-white/10">
                   <Dialog.Title className="sr-only">Daily entry for {formatDisplayDate(date)}</Dialog.Title>
                   <Dialog.Description className="sr-only">Mood and journal detail</Dialog.Description>
                   <span className={cn("mx-auto grid size-20 place-items-center rounded-[1.6rem] text-5xl", mood.className)} aria-label={`${mood.label} mood`}>{mood.emoji}</span>

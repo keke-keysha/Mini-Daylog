@@ -118,6 +118,7 @@
   --daylog-radius-card: 1.75rem;
   --daylog-radius-control: 1rem;
   --daylog-shadow: 0 12px 36px rgb(62 48 91 / 8%);
+  --daylog-shadow-hover: 0 16px 42px rgb(62 48 91 / 13%);
 }
 
 .dark {
@@ -166,6 +167,7 @@
   --daylog-yellow-strong: #625833;
   --daylog-yellow-ink: #fff3c4;
   --daylog-shadow: 0 16px 40px rgb(0 0 0 / 20%);
+  --daylog-shadow-hover: 0 20px 48px rgb(0 0 0 / 30%);
 }
 
 @layer base {
@@ -177,6 +179,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    overflow-x: clip;
     background-image:
       radial-gradient(circle at 7% 0%, color-mix(in srgb, var(--daylog-lavender-soft) 65%, transparent) 0, transparent 25rem),
       radial-gradient(circle at 100% 12%, color-mix(in srgb, var(--daylog-blue-soft) 45%, transparent) 0, transparent 28rem);
@@ -191,6 +194,13 @@
   ::selection {
     background: var(--daylog-lavender-strong);
     color: var(--daylog-lavender-ink);
+  }
+  button,
+  a,
+  input,
+  textarea,
+  select {
+    -webkit-tap-highlight-color: transparent;
   }
 }
 
@@ -294,6 +304,21 @@
   .nav-active-lavender { @apply bg-daylog-lavender text-daylog-lavender-ink; }
   .nav-active-peach { @apply bg-daylog-peach text-daylog-peach-ink; }
   .nav-active-pink { @apply bg-daylog-pink text-daylog-pink-ink; }
+}
+
+@media (max-width: 390px) {
+  .page-shell {
+    @apply px-4;
+  }
+  .book-grid {
+    @apply gap-x-3 gap-y-6;
+  }
+  .bottom-nav {
+    @apply left-2 right-2;
+  }
+  .bottom-nav-item {
+    @apply min-h-13 text-[9px];
+  }
 }
 
 * {
