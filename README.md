@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DayLog
 
-## Getting Started
+DayLog adalah personal dashboard privat berbasis Next.js untuk daily log, focus tracking, activity tracking, buku, serta movie/series.
 
-First, run the development server:
+## Menjalankan project
+
+Gunakan Node.js dan npm, lalu siapkan environment lokal:
 
 ```bash
+npm install
+copy .env.example .env
+npm run db:migrate
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Isi variabel berikut di `.env` sebelum migration atau menjalankan aplikasi:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```env
+DATABASE_URL="postgresql://..."
+AUTH_SECRET="minimal-32-characters"
+PERSONAL_USERNAME="..."
+PERSONAL_PASSWORD="minimal-8-characters"
+APP_TIMEZONE="Asia/Jakarta"
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Tidak ada registrasi pengguna. Login memakai satu pasang username/password privat dari environment.
 
-## Learn More
+## Penyimpanan gambar
 
-To learn more about Next.js, take a look at the following resources:
+Cover buku, cover media, dan dokumentasi media disimpan langsung di Neon PostgreSQL melalui tabel `stored_assets` (`bytea`). Aplikasi tidak menggunakan Vercel Blob atau filesystem persisten. Upload menerima JPEG, PNG, dan WebP hingga 1.5 MB; aset hanya dapat dibaca oleh sesi yang terautentikasi.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Quality checks
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run lint
+npm run typecheck
+npm run build
+```
 
-## Deploy on Vercel
+## Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Buat database Neon dan isi `DATABASE_URL` lokal.
+2. Jalankan `npm run db:migrate` untuk menerapkan migration.
+3. Tambahkan seluruh environment variables di atas ke project Vercel.
+4. Deploy project ke Vercel. Tidak diperlukan Blob store atau `BLOB_READ_WRITE_TOKEN`.

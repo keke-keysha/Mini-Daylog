@@ -8,7 +8,7 @@ import { requireSession } from "@/lib/auth";
 import { getDb } from "@/lib/db";
 import { activityLogs, trackerDays } from "@/lib/db/schema";
 import { idSchema } from "@/lib/validations/daily";
-import { paceToSeconds, trackerActivitySchema } from "@/lib/validations/tracker";
+import { paceToSeconds, trackerActivitySchema, trackerStatusSchema } from "@/lib/validations/tracker";
 
 type ActivityInput = {
   date: string;
@@ -16,6 +16,10 @@ type ActivityInput = {
   distanceKm: string;
   durationMinutes: string;
   pace: string;
+};
+
+type StatusInput = {
+  date: string;
   isFasting: boolean;
   isSick: boolean;
   isRedDay: boolean;
@@ -33,16 +37,41 @@ function parseInput(input: ActivityInput) {
 async function upsertTrackerDay(input: z.infer<typeof trackerActivitySchema>) {
   const [day] = await getDb()
     .insert(trackerDays)
-    .values({ date: input.date, isFasting: input.isFasting, isSick: input.isSick, isRedDay: input.isRedDay })
+    .values({ date: input.date })
     .onConflictDoUpdate({
       target: trackerDays.date,
-      set: { isFasting: input.isFasting, isSick: input.isSick, isRedDay: input.isRedDay, updatedAt: new Date() },
+      set: { updatedAt: new Date() },
     })
     .returning({ id: trackerDays.id });
   return day.id;
 }
 
 import type { z } from "zod";
+
+export async function setTrackerStatus(input: StatusInput): Promise<MutationResult> {
+  await requireSession();
+  const parsed = trackerStatusSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
+  try {
+    await getDb()
+      .insert(trackerDays)
+      .values(parsed.data)
+      .onConflictDoUpdate({
+        target: trackerDays.date,
+        set: {
+          isFasting: parsed.data.isFasting,
+          isSick: parsed.data.isSick,
+          isRedDay: parsed.data.isRedDay,
+          updatedAt: new Date(),
+        },
+      });
+    refreshTracker();
+    return { ok: true };
+  } catch (error) {
+    console.error("Failed to update tracker status", error);
+    return { ok: false, error: "Something went wrong" };
+  }
+}
 
 export async function createActivity(input: ActivityInput): Promise<MutationResult> {
   await requireSession();

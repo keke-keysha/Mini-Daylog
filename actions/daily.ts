@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 import { requireSession } from "@/lib/auth";
 import { getDb } from "@/lib/db";
 import { dailyEntries, dailyTodos } from "@/lib/db/schema";
-import { idSchema, journalSchema, logicalDateSchema, moodSchema, todoTextSchema } from "@/lib/validations/daily";
+import { completedSchema, idSchema, journalSchema, logicalDateSchema, moodSchema, todoTextSchema } from "@/lib/validations/daily";
 
 export type MutationResult = { ok: true } | { ok: false; error: string };
 
@@ -81,9 +81,10 @@ export async function updateTodo(idInput: string, textInput: string): Promise<Mu
 export async function toggleTodo(idInput: string, completed: boolean): Promise<MutationResult> {
   await requireSession();
   const id = idSchema.safeParse(idInput);
-  if (!id.success) return { ok: false, error: "Invalid todo" };
+  const completedValue = completedSchema.safeParse(completed);
+  if (!id.success || !completedValue.success) return { ok: false, error: "Invalid todo" };
   try {
-    await getDb().update(dailyTodos).set({ isCompleted: completed, updatedAt: new Date() }).where(eq(dailyTodos.id, id.data));
+    await getDb().update(dailyTodos).set({ isCompleted: completedValue.data, updatedAt: new Date() }).where(eq(dailyTodos.id, id.data));
     refreshDaily();
     return { ok: true };
   } catch (error) {

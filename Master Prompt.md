@@ -297,17 +297,9 @@ Aplikasi memiliki upload:
 
 JANGAN menyimpan file ke filesystem Next.js/Vercel secara permanen.
 
-Gunakan:
+Sesuai keputusan arsitektur project, JANGAN gunakan Vercel Blob. Simpan file langsung di Neon PostgreSQL pada tabel aset khusus menggunakan kolom `bytea` beserta metadata MIME, ukuran, dan nama asli. Model Book/Media hanya menyimpan foreign key aset.
 
-**Vercel Blob**
-
-Tambahkan package jika belum tersedia:
-
-```bash
-@vercel/blob
-```
-
-Simpan URL file ke PostgreSQL, bukan binary file.
+File disajikan melalui Route Handler terautentikasi berdasarkan ID aset. Response harus memakai MIME yang tersimpan, `X-Content-Type-Options: nosniff`, dan cache private.
 
 Validasi file menggunakan server-side validation.
 
@@ -322,20 +314,10 @@ image/webp
 Maksimum sekitar:
 
 ```text
-4 MB
+1.5 MB
 ```
 
-Gunakan nama/path file yang tidak mudah collision.
-
-Contoh:
-
-```text
-books/{uuid}-{filename}
-movies/{uuid}-{filename}
-movies/documentation/{uuid}-{filename}
-```
-
-Pastikan endpoint upload hanya bisa digunakan user yang sudah login.
+Validasi MIME, ukuran, dan signature file di server. Gunakan UUID untuk ID aset dan pastikan endpoint upload maupun pembacaan aset hanya bisa digunakan user yang sudah login.
 
 ---
 
@@ -360,8 +342,6 @@ AUTH_SECRET=""
 
 PERSONAL_USERNAME=""
 PERSONAL_PASSWORD=""
-
-BLOB_READ_WRITE_TOKEN=""
 
 APP_TIMEZONE="Asia/Jakarta"
 ```
@@ -2751,8 +2731,7 @@ Jangan log:
 - password,
 - auth token,
 - DATABASE_URL,
-- secret,
-- Blob token.
+- secret.
 
 ---
 
@@ -3569,6 +3548,7 @@ JANGAN:
 - menggunakan localStorage sebagai database utama,
 - menyimpan image Base64 di PostgreSQL,
 - menyimpan uploaded image ke local filesystem,
+- menggunakan Vercel Blob; seluruh uploaded image disimpan sebagai binary `bytea` di Neon PostgreSQL,
 - membuat authentication sendiri jika NextAuth sudah digunakan,
 - menggunakan email login,
 - membuat register page,
@@ -3677,7 +3657,6 @@ Setelah seluruh stage selesai, berikan final report singkat berisi:
 7. hasil TypeScript check,
 8. hasil production build,
 9. daftar commit,
-10. langkah yang perlu saya lakukan sendiri untuk Vercel,
-11. khusus Vercel Blob, jelaskan bahwa saya perlu membuat/connect Blob store dan mengisi `BLOB_READ_WRITE_TOKEN` bila belum otomatis tersedia.
+10. langkah yang perlu saya lakukan sendiri untuk Neon dan Vercel, termasuk menjalankan migration dan mengisi environment variables.
 
 Jangan melakukan deployment sendiri.

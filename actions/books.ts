@@ -1,10 +1,13 @@
 "use server";
 
+import { randomUUID } from "node:crypto";
+
+import type { BatchItem } from "drizzle-orm/batch";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 import type { MutationResult } from "@/actions/daily";
-import { deleteAsset, persistImage } from "@/lib/assets";
+import { deleteAsset, imageErrorMessage, persistImage } from "@/lib/assets";
 import { requireSession } from "@/lib/auth";
 import { todayJakarta } from "@/lib/date";
 import { getDb } from "@/lib/db";
@@ -39,6 +42,10 @@ function parseNewQuotes(formData: FormData) {
 
 import { z } from "zod";
 
+async function executeBatch(items: BatchItem<"pg">[]) {
+  await getDb().batch(items as [BatchItem<"pg">, ...BatchItem<"pg">[]]);
+}
+
 export async function createBook(formData: FormData): Promise<MutationResult> {
   await requireSession();
   const parsed = parseBook(formData);
@@ -49,20 +56,23 @@ export async function createBook(formData: FormData): Promise<MutationResult> {
   try {
     coverAssetId = await persistImage(formData.get("cover") instanceof File ? formData.get("cover") as File : null);
     const today = todayJakarta();
-    const [book] = await getDb().insert(books).values({
+    const bookId = randomUUID();
+    const queries: BatchItem<"pg">[] = [getDb().insert(books).values({
+      id: bookId,
       ...parsed.data,
       coverAssetId,
       startedAt: today,
       completedAt: parsed.data.currentPage === parsed.data.totalPages ? today : null,
-    }).returning({ id: books.id });
-    if (quotes.data.length) await getDb().insert(bookQuotes).values(quotes.data.map((quote) => ({ bookId: book.id, quote })));
-    if (parsed.data.currentPage > 0) await getDb().insert(bookProgressLogs).values({ bookId: book.id, date: today, previousPage: 0, newPage: parsed.data.currentPage, pagesDelta: parsed.data.currentPage });
+    })];
+    if (quotes.data.length) queries.push(getDb().insert(bookQuotes).values(quotes.data.map((quote) => ({ bookId, quote }))));
+    if (parsed.data.currentPage > 0) queries.push(getDb().insert(bookProgressLogs).values({ bookId, date: today, previousPage: 0, newPage: parsed.data.currentPage, pagesDelta: parsed.data.currentPage }));
+    await executeBatch(queries);
     refreshBooks();
     return { ok: true };
   } catch (error) {
     console.error("Failed to create book", error);
     await deleteAsset(coverAssetId).catch(() => undefined);
-    return { ok: false, error: error instanceof Error && error.message.includes("1.5 MB") ? error.message : "Something went wrong" };
+    return { ok: false, error: imageErrorMessage(error) };
   }
 }
 
@@ -78,27 +88,28 @@ export async function updateBook(idInput: string, formData: FormData): Promise<M
   try {
     newCoverId = await persistImage(formData.get("cover") instanceof File ? formData.get("cover") as File : null);
     const today = todayJakarta();
-    await getDb().update(books).set({
+    const queries: BatchItem<"pg">[] = [getDb().update(books).set({
       ...parsed.data,
       coverAssetId: newCoverId ?? existing.coverAssetId,
       completedAt: existing.completedAt ?? (parsed.data.currentPage === parsed.data.totalPages ? today : null),
       updatedAt: new Date(),
-    }).where(eq(books.id, id.data));
-    if (existing.currentPage !== parsed.data.currentPage) await getDb().insert(bookProgressLogs).values({
+    }).where(eq(books.id, id.data))];
+    if (existing.currentPage !== parsed.data.currentPage) queries.push(getDb().insert(bookProgressLogs).values({
       bookId: id.data,
       date: today,
       previousPage: existing.currentPage,
       newPage: parsed.data.currentPage,
       pagesDelta: parsed.data.currentPage - existing.currentPage,
-    });
-    if (quotes.data.length) await getDb().insert(bookQuotes).values(quotes.data.map((quote) => ({ bookId: id.data, quote })));
-    if (newCoverId) await deleteAsset(existing.coverAssetId);
+    }));
+    if (quotes.data.length) queries.push(getDb().insert(bookQuotes).values(quotes.data.map((quote) => ({ bookId: id.data, quote }))));
+    await executeBatch(queries);
+    if (newCoverId) await deleteAsset(existing.coverAssetId).catch((error) => console.error("Failed to remove replaced book cover", error));
     refreshBooks();
     return { ok: true };
   } catch (error) {
     console.error("Failed to update book", error);
     await deleteAsset(newCoverId).catch(() => undefined);
-    return { ok: false, error: error instanceof Error && error.message.includes("1.5 MB") ? error.message : "Something went wrong" };
+    return { ok: false, error: imageErrorMessage(error) };
   }
 }
 
@@ -109,7 +120,7 @@ export async function deleteBook(idInput: string): Promise<MutationResult> {
   try {
     const [book] = await getDb().select({ coverAssetId: books.coverAssetId }).from(books).where(eq(books.id, id.data)).limit(1);
     await getDb().delete(books).where(eq(books.id, id.data));
-    await deleteAsset(book?.coverAssetId);
+    await deleteAsset(book?.coverAssetId).catch((error) => console.error("Failed to remove deleted book cover", error));
     refreshBooks();
     return { ok: true };
   } catch (error) {

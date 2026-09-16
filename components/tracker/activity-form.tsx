@@ -51,9 +51,6 @@ export function ActivityForm({ today, initial }: { today: string; initial?: Acti
       distanceKm: data.get("distanceKm")?.toString() ?? "",
       durationMinutes: data.get("durationMinutes")?.toString() ?? "",
       pace: data.get("pace")?.toString() ?? "",
-      isFasting: data.get("isFasting") === "on",
-      isSick: data.get("isSick") === "on",
-      isRedDay: data.get("isRedDay") === "on",
     };
     startTransition(async () => {
       const result = initial ? await updateActivity(initial.id, input) : await createActivity(input);
@@ -69,7 +66,6 @@ export function ActivityForm({ today, initial }: { today: string; initial?: Acti
 
   return (
     <form className="space-y-5" noValidate onSubmit={submit}>
-      <fieldset><legend className="mb-3 text-sm font-semibold">Today&apos;s Status</legend><div className="flex flex-wrap gap-4">{[["isFasting", "Fasting", initial?.isFasting], ["isSick", "Sick", initial?.isSick], ["isRedDay", "Red Day", initial?.isRedDay]].map(([name, label, checked]) => <label key={String(name)} className="flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" name={String(name)} defaultChecked={Boolean(checked)} className="size-4 accent-primary" /> {String(label)}</label>)}</div></fieldset>
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Date"><Input name="date" type="date" defaultValue={initial?.date ?? today} /></Field>
         <Field label="Activity"><Input name="activity" placeholder="Running, walking, gym..." defaultValue={initial?.activity} /></Field>

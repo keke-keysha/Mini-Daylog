@@ -10,6 +10,10 @@ export const trackerActivitySchema = z.object({
   distanceKm: optionalNumber,
   durationMinutes: z.preprocess((value) => Number(value), z.number().int().positive("Duration must be greater than zero").max(100_000)),
   pace: z.string().trim().regex(/^$|^\d{1,3}:[0-5]\d$/, "Use pace format mm:ss"),
+});
+
+export const trackerStatusSchema = z.object({
+  date: logicalDateSchema,
   isFasting: z.boolean(),
   isSick: z.boolean(),
   isRedDay: z.boolean(),

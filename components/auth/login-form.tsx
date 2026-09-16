@@ -51,7 +51,8 @@ export function LoginForm() {
 
     toast.success("Login successful");
     const callbackUrl = searchParams.get("callbackUrl");
-    router.replace(callbackUrl?.startsWith("/") ? callbackUrl : "/");
+    const safeCallbackUrl = callbackUrl?.startsWith("/") && !callbackUrl.startsWith("//") ? callbackUrl : "/";
+    router.replace(safeCallbackUrl);
     router.refresh();
   }
 

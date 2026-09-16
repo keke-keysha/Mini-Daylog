@@ -7,6 +7,7 @@ import type { MutationResult } from "@/actions/daily";
 import { requireSession } from "@/lib/auth";
 import { getDb } from "@/lib/db";
 import { focusMaterials, focusSubtopics, focusTasks } from "@/lib/db/schema";
+import { completedSchema } from "@/lib/validations/daily";
 import { focusTaskSchema, focusTitleSchema, idSchema } from "@/lib/validations/focus";
 
 function refreshFocus() {
@@ -66,8 +67,9 @@ export async function updateSubtopic(idInput: string, titleInput: string): Promi
 export async function toggleSubtopic(idInput: string, completed: boolean): Promise<MutationResult> {
   await requireSession();
   const id = idSchema.safeParse(idInput);
-  if (!id.success) return { ok: false, error: "Invalid subtopic" };
-  return mutate(() => getDb().update(focusSubtopics).set({ isCompleted: completed, updatedAt: new Date() }).where(eq(focusSubtopics.id, id.data)), "Failed to toggle subtopic");
+  const completedValue = completedSchema.safeParse(completed);
+  if (!id.success || !completedValue.success) return { ok: false, error: "Invalid subtopic" };
+  return mutate(() => getDb().update(focusSubtopics).set({ isCompleted: completedValue.data, updatedAt: new Date() }).where(eq(focusSubtopics.id, id.data)), "Failed to toggle subtopic");
 }
 
 export async function deleteSubtopic(idInput: string): Promise<MutationResult> {
@@ -96,8 +98,9 @@ export async function updateFocusTask(idInput: string, titleInput: string, deadl
 export async function toggleFocusTask(idInput: string, completed: boolean): Promise<MutationResult> {
   await requireSession();
   const id = idSchema.safeParse(idInput);
-  if (!id.success) return { ok: false, error: "Invalid task" };
-  return mutate(() => getDb().update(focusTasks).set({ isCompleted: completed, updatedAt: new Date() }).where(eq(focusTasks.id, id.data)), "Failed to toggle focus task");
+  const completedValue = completedSchema.safeParse(completed);
+  if (!id.success || !completedValue.success) return { ok: false, error: "Invalid task" };
+  return mutate(() => getDb().update(focusTasks).set({ isCompleted: completedValue.data, updatedAt: new Date() }).where(eq(focusTasks.id, id.data)), "Failed to toggle focus task");
 }
 
 export async function deleteFocusTask(idInput: string): Promise<MutationResult> {
