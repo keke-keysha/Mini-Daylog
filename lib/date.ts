@@ -11,6 +11,10 @@ export function todayJakarta(now = new Date()): string {
   return dateFormatter.format(now);
 }
 
+export function jakartaDate(value: Date): string {
+  return dateFormatter.format(value);
+}
+
 export function formatDisplayDate(value: string): string {
   const [year, month, day] = value.split("-");
   return `${day}-${month}-${year}`;
