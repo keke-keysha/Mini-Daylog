@@ -29,7 +29,3 @@ export async function persistImage(file: File | null): Promise<string | null> {
 export async function deleteAsset(id: string | null | undefined) {
   if (id) await getDb().delete(storedAssets).where(eq(storedAssets.id, id));
 }
-
-export function assetUrl(id: string | null): string | null {
-  return id ? `/api/assets/${id}` : null;
-}
