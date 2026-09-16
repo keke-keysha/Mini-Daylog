@@ -171,6 +171,13 @@
   .calendar-flat { @apply bg-amber-100 text-amber-900 dark:bg-amber-950/60 dark:text-amber-100; }
   .calendar-happy { @apply bg-emerald-100 text-emerald-900 dark:bg-emerald-950/60 dark:text-emerald-100; }
   .calendar-angry { @apply bg-red-100 text-red-900 dark:bg-red-950/60 dark:text-red-100; }
+  .legend { @apply inline-flex items-center gap-1.5 before:size-2.5 before:rounded-full before:bg-muted-foreground/30; }
+  .legend.fasting { @apply before:bg-amber-300; }
+  .legend.sick { @apply before:bg-orange-400; }
+  .legend.red-day { @apply before:bg-rose-400; }
+  .row-fasting { @apply bg-amber-50 dark:bg-amber-950/25; }
+  .row-sick { @apply bg-orange-50 dark:bg-orange-950/25; }
+  .row-red-day { @apply bg-rose-50 dark:bg-rose-950/25; }
   .field {
     @apply min-h-11 w-full rounded-xl border border-input bg-background px-3 text-base outline-none transition-shadow placeholder:text-muted-foreground focus-visible:ring-3 focus-visible:ring-ring/30 aria-invalid:border-destructive sm:text-sm;
   }
