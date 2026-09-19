@@ -37,9 +37,3 @@ npm run typecheck
 npm run build
 ```
 
-## Deployment
-
-1. Buat database Neon dan isi `DATABASE_URL` lokal.
-2. Jalankan `npm run db:migrate` untuk menerapkan migration.
-3. Tambahkan seluruh environment variables di atas ke project Vercel.
-4. Deploy project ke Vercel. Tidak diperlukan Blob store atau `BLOB_READ_WRITE_TOKEN`.
