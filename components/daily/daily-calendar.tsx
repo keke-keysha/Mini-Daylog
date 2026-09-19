@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { Dialog } from "radix-ui";
 
 import { Button } from "@/components/ui/button";
+import { JournalForm } from "@/components/daily/journal-form";
 import { formatDisplayDate } from "@/lib/date";
 import { cn } from "@/lib/utils";
 import { moods, type Mood } from "@/components/daily/mood-picker";
@@ -60,7 +61,14 @@ export function DailyCalendar({ firstUsedDate, today, entries }: { firstUsedDate
                   <Dialog.Description className="sr-only">Mood and journal detail</Dialog.Description>
                   <span className={cn("mx-auto grid size-20 place-items-center rounded-[1.6rem] text-5xl", mood.className)} aria-label={`${mood.label} mood`}>{mood.emoji}</span>
                   <p className="mt-4 font-heading text-xl font-semibold">{formatDisplayDate(date)}</p>
-                  <p className="mt-4 min-h-24 whitespace-pre-wrap rounded-[1.25rem] bg-white/45 p-4 text-left text-sm leading-6 text-muted-foreground dark:bg-white/5">{entry.journal || "No journal entry"}</p>
+                  {date < today ? (
+                    <div className="mt-4 text-left">
+                      <p className="mb-2 text-xs font-extrabold uppercase tracking-[0.14em] text-foreground/50">Edit journal</p>
+                      <JournalForm date={date} initialJournal={entry.journal} />
+                    </div>
+                  ) : (
+                    <p className="mt-4 min-h-24 whitespace-pre-wrap rounded-[1.25rem] bg-white/45 p-4 text-left text-sm leading-6 text-muted-foreground dark:bg-white/5">{entry.journal || "No journal entry"}</p>
+                  )}
                   <Dialog.Close className="absolute right-4 top-4 grid size-10 place-items-center rounded-2xl text-muted-foreground transition hover:bg-white/70 focus-visible:ring-3 focus-visible:ring-ring/30 dark:hover:bg-white/10" aria-label="Close"><X /></Dialog.Close>
                 </Dialog.Content>
               </Dialog.Portal>

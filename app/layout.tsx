@@ -18,7 +18,11 @@ const nunito = Nunito({
 export const metadata: Metadata = {
   title: { default: "DayLog", template: "%s · DayLog" },
   description: "A private personal dashboard for everyday life.",
-  icons: { icon: "/logo.png" },
+  icons: {
+    icon: [{ url: "/logo.png", type: "image/png" }],
+    shortcut: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
