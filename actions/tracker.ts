@@ -66,6 +66,8 @@ export async function setTrackerStatus(input: StatusInput): Promise<MutationResu
         },
       });
     refreshTracker();
+    revalidatePath("/daily");
+    revalidatePath("/daily/calendar");
     return { ok: true };
   } catch (error) {
     console.error("Failed to update tracker status", error);

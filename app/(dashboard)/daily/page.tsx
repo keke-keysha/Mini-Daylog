@@ -1,9 +1,11 @@
 import Link from "next/link";
-import { CalendarDays, ListTodo, NotebookPen, Smile } from "lucide-react";
+import { CalendarDays, HeartPulse, ListTodo, NotebookPen, Smile } from "lucide-react";
 
 import { DailyTodos } from "@/components/daily/daily-todos";
 import { JournalForm } from "@/components/daily/journal-form";
 import { MoodPicker } from "@/components/daily/mood-picker";
+import { TrackerStatusForm } from "@/components/tracker/tracker-status-form";
+import { getTrackerStatus } from "@/lib/data/tracker";
 import { Card } from "@/components/ui/card";
 import { PageHeading, PastelIcon } from "@/components/ui/presentation";
 import { formatDisplayDate, todayJakarta } from "@/lib/date";
@@ -14,7 +16,7 @@ export const dynamic = "force-dynamic";
 export default async function DailyPage() {
   const today = todayJakarta();
   await ensureAppSettings();
-  const entry = await getDailyEntry(today);
+  const [entry, status] = await Promise.all([getDailyEntry(today), getTrackerStatus(today)]);
 
   return (
     <main className="page-shell">
@@ -23,6 +25,10 @@ export default async function DailyPage() {
         <div aria-hidden="true" className="pointer-events-none absolute -right-8 -top-10 size-32 rounded-full bg-white/35" />
         <div className="mb-5 flex items-center gap-3"><PastelIcon icon={Smile} tone="blue" className="bg-white/60 dark:bg-white/10" /><div><h2 className="font-heading text-xl font-semibold">Today&apos;s Mood</h2><p className="text-xs font-bold text-foreground/50">Tap what feels closest right now</p></div></div>
         <MoodPicker date={today} initialMood={entry.mood} />
+      </Card>
+      <Card className="bento-mint">
+        <div className="mb-5 flex items-center gap-3"><PastelIcon icon={HeartPulse} tone="mint" className="bg-white/60 dark:bg-white/10" /><div><h2 className="font-heading text-xl font-semibold">Today&apos;s Status</h2><p className="text-xs font-bold text-foreground/50">A gentle check-in with your body</p></div></div>
+        <TrackerStatusForm date={today} initialStatus={status} />
       </Card>
       <div className="grid gap-4 lg:grid-cols-2 lg:gap-5">
         <Card className="bento-yellow min-h-[23rem]"><div className="mb-5 flex items-center gap-3"><PastelIcon icon={ListTodo} tone="yellow" className="bg-white/60 dark:bg-white/10" /><div><h2 className="font-heading text-xl font-semibold">To Do List</h2><p className="text-xs font-bold text-foreground/50">Small steps for today</p></div></div><DailyTodos key={entry.todos.map((todo) => todo.id).join(",")} date={today} initialTodos={entry.todos.map(({ id, text, isCompleted }) => ({ id, text, isCompleted }))} /></Card>

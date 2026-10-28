@@ -1,9 +1,8 @@
-import { Activity, ChartNoAxesCombined, Clock3, Footprints, HeartPulse, Plus } from "lucide-react";
+import { Activity, ChartNoAxesCombined, Clock3, Footprints, Plus } from "lucide-react";
 
 import { ActivityChart } from "@/components/tracker/activity-chart";
 import { ActivityForm } from "@/components/tracker/activity-form";
 import { ActivityLog } from "@/components/tracker/activity-log";
-import { TrackerStatusForm } from "@/components/tracker/tracker-status-form";
 import { Card } from "@/components/ui/card";
 import { MetricCard, PageHeading, PastelIcon } from "@/components/ui/presentation";
 import { todayJakarta } from "@/lib/date";
@@ -20,11 +19,7 @@ export default async function TrackerPage() {
     <main className="page-shell">
       <PageHeading eyebrow="Move and recover" title="Tracker" description="Keep activity and recovery in one gentle rhythm." />
       <div className="grid gap-4 xl:grid-cols-12">
-        <Card className="bento-mint border-0 xl:col-span-5">
-          <div className="mb-5 flex items-center gap-3"><PastelIcon icon={HeartPulse} tone="mint" className="bg-daylog-mint-strong" /><div><p className="eyebrow">Check in</p><h2 className="section-title mb-0">Today&apos;s Status</h2></div></div>
-          <TrackerStatusForm date={today} initialStatus={data.todayStatus} />
-        </Card>
-        <Card className="bento-peach border-0 xl:col-span-7">
+        <Card className="bento-peach border-0 xl:col-span-12">
           <div className="mb-5 flex items-center gap-3"><PastelIcon icon={Plus} tone="peach" className="bg-daylog-peach-strong" /><div><p className="eyebrow">Log movement</p><h2 className="section-title mb-0">Add Activity</h2></div></div>
           <ActivityForm today={today} />
         </Card>

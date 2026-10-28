@@ -6,6 +6,15 @@ import { addDays, todayJakarta } from "@/lib/date";
 import { getDb } from "@/lib/db";
 import { activityLogs, trackerDays } from "@/lib/db/schema";
 
+export async function getTrackerStatus(date: string) {
+  const [status] = await getDb()
+    .select({ isFasting: trackerDays.isFasting, isSick: trackerDays.isSick, isRedDay: trackerDays.isRedDay })
+    .from(trackerDays)
+    .where(eq(trackerDays.date, date))
+    .limit(1);
+  return status ?? { isFasting: false, isSick: false, isRedDay: false };
+}
+
 export async function getTrackerData() {
   const today = todayJakarta();
   const [rows, todayStatusRows] = await Promise.all([

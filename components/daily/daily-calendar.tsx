@@ -10,7 +10,13 @@ import { formatDisplayDate } from "@/lib/date";
 import { cn } from "@/lib/utils";
 import { moods, type Mood } from "@/components/daily/mood-picker";
 
-type Entry = { date: string; mood: Mood; journal: string; totalTodos: number; completedTodos: number };
+import type { DailyCalendarEntry as Entry } from "@/lib/data/daily";
+
+const statusDots = [
+  { key: "isFasting", label: "Fasting", color: "bg-green-800" },
+  { key: "isSick", label: "Sick", color: "bg-yellow-700" },
+  { key: "isRedDay", label: "Red Day", color: "bg-red-800" },
+] as const;
 
 const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -44,14 +50,17 @@ export function DailyCalendar({ firstUsedDate, today, entries }: { firstUsedDate
         {cells.map((day, index) => {
           if (!day) return <div key={`empty-${index}`} />;
           const date = `${month}-${String(day).padStart(2, "0")}`;
-          const entry = lookup.get(date) ?? { date, mood: "FLAT" as Mood, journal: "", totalTodos: 0, completedTodos: 0 };
+          const entry = lookup.get(date) ?? { date, mood: "FLAT" as Mood, journal: "", totalTodos: 0, completedTodos: 0, isFasting: false, isSick: false, isRedDay: false };
           const mood = moods.find((item) => item.value === entry.mood)!;
           const disabled = date < firstUsedDate || date > today;
           return (
             <Dialog.Root key={date}>
               <Dialog.Trigger asChild>
-                <button disabled={disabled} className={cn("calendar-day", `calendar-${entry.mood.toLowerCase()}`, date === today && "is-today")}>
+                <button disabled={disabled} className={cn("calendar-day relative min-h-14 pb-3", `calendar-${entry.mood.toLowerCase()}`, date === today && "is-today")}>
                   <span className="font-semibold">{day}</span><small>{entry.completedTodos}/{entry.totalTodos}</small>
+                  <span className="absolute bottom-1.5 right-1 flex gap-0.5 sm:right-2">
+                    {statusDots.filter((status) => entry[status.key]).map((status) => <span key={status.key} title={status.label} className={cn("size-1.5 rounded-full ring-1 ring-white/60", status.color)}><span className="sr-only">{status.label}</span></span>)}
+                  </span>
                 </button>
               </Dialog.Trigger>
               <Dialog.Portal>
@@ -75,6 +84,9 @@ export function DailyCalendar({ firstUsedDate, today, entries }: { firstUsedDate
             </Dialog.Root>
           );
         })}
+      </div>
+      <div className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs text-muted-foreground" aria-label="Calendar status colors">
+        {statusDots.map((status) => <span key={status.key} className="inline-flex items-center gap-1.5"><span aria-hidden="true" className={cn("size-1.5 rounded-full ring-1 ring-white/60", status.color)} />{status.label}</span>)}
       </div>
     </div>
   );
