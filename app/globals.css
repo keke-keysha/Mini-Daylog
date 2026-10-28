@@ -270,6 +270,17 @@
   .mood-flat { @apply bg-daylog-yellow text-daylog-yellow-ink; }
   .mood-happy { @apply bg-daylog-mint text-daylog-mint-ink; }
   .mood-angry { @apply bg-daylog-pink text-daylog-pink-ink; }
+  .thought-body {
+    @apply min-h-80 max-w-none rounded-2xl p-2 text-base font-normal leading-8 outline-none focus-visible:ring-3 focus-visible:ring-ring/25 sm:p-4;
+    overflow-wrap: anywhere;
+  }
+  .thought-body p { @apply my-3; }
+  .thought-body strong { @apply font-extrabold; }
+  .thought-body em { @apply italic; }
+  .thought-body a { @apply cursor-pointer text-primary underline underline-offset-4; }
+  .thought-body mark { @apply rounded bg-yellow-200 px-0.5 text-slate-900; }
+  .thought-body img { @apply my-5 h-auto max-w-full rounded-2xl; }
+  .thought-body .ProseMirror-selectednode { @apply ring-3 ring-ring/40; }
   .calendar-day {
     @apply flex aspect-square min-w-0 flex-col items-center justify-center rounded-2xl text-xs transition-all duration-200 hover:-translate-y-0.5 hover:scale-[1.03] focus-visible:ring-3 focus-visible:ring-ring/30 disabled:pointer-events-none disabled:opacity-20 sm:text-sm;
   }
