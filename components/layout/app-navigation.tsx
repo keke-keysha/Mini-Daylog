@@ -10,7 +10,7 @@ const items = [
   { href: "/", label: "Home", icon: Home, activeClass: "nav-active-lavender" },
   { href: "/daily", label: "Daily", icon: CalendarDays, activeClass: "nav-active-blue" },
   { href: "/focus", label: "Focus", icon: Crosshair, activeClass: "nav-active-lavender" },
-  { href: "/tracker", label: "Tracker", icon: Route, activeClass: "nav-active-peach" },
+  { href: "/tracker", label: "Activity", icon: Route, activeClass: "nav-active-peach" },
   { href: "/library", label: "Library", icon: BookOpen, activeClass: "nav-active-pink" },
 ];
 

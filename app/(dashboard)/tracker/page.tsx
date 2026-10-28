@@ -17,7 +17,7 @@ export default async function TrackerPage() {
   const today = todayJakarta();
   return (
     <main className="page-shell">
-      <PageHeading eyebrow="Move and recover" title="Tracker" description="Keep activity and recovery in one gentle rhythm." />
+      <PageHeading eyebrow="Move and recover" title="Activity" description="Keep your movement in one gentle rhythm." />
       <div className="grid gap-4 xl:grid-cols-12">
         <Card className="bento-peach border-0 xl:col-span-12">
           <div className="mb-5 flex items-center gap-3"><PastelIcon icon={Plus} tone="peach" className="bg-daylog-peach-strong" /><div><p className="eyebrow">Log movement</p><h2 className="section-title mb-0">Add Activity</h2></div></div>

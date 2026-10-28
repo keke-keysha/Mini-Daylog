@@ -66,7 +66,7 @@ export default async function HomePage() {
         </Card>
 
         <Card className="bento-peach min-h-80 lg:col-span-5">
-          <WidgetHeader href="/tracker" title="Tracker" subtitle="Movement this week" icon={Route} tone="peach" />
+          <WidgetHeader href="/tracker" title="Activity" subtitle="Movement this week" icon={Route} tone="peach" />
           {dashboard.lastActivity ? (
             <Link href="/tracker" className="grid flex-1 content-start gap-4 focus-visible:ring-3 focus-visible:ring-ring/30">
               <div className="rounded-[1.35rem] bg-white/45 p-4 dark:bg-white/5"><p className="text-xs font-bold text-foreground/55">Last activity · {formatDisplayDate(dashboard.lastActivity.date)}</p><p className="mt-1 font-heading text-xl font-semibold">{dashboard.lastActivity.activity}</p></div>
