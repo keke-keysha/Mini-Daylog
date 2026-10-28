@@ -1,8 +1,11 @@
+import type { ThoughtContent } from "@/lib/thoughts/content";
+
 import {
   boolean,
   date,
   index,
   integer,
+  jsonb,
   numeric,
   pgEnum,
   pgTable,
@@ -234,4 +237,15 @@ export const mediaProgressLogs = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => [index("media_progress_media_date_idx").on(table.mediaId, table.date)],
+);
+
+export const thoughts = pgTable(
+  "thoughts",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    title: text("title").notNull(),
+    content: jsonb("content").$type<ThoughtContent>().notNull(),
+    ...timestamps,
+  },
+  (table) => [index("thoughts_updated_idx").on(table.updatedAt)],
 );
