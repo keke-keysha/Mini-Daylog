@@ -55,7 +55,7 @@ export function DailyCalendar({ firstUsedDate, today, entries }: { firstUsedDate
           return (
             <Dialog.Root key={date}>
               <Dialog.Trigger asChild>
-                <button disabled={disabled} className={cn("calendar-day relative min-h-14 pb-3", `calendar-${entry.mood.toLowerCase()}`, date === today && "is-today")}>
+                <button disabled={disabled} className={cn("calendar-day relative min-h-14 w-full pb-3", `calendar-${entry.mood.toLowerCase()}`, date === today && "is-today")}>
                   <span className="font-semibold">{day}</span><small>{entry.completedTodos}/{entry.totalTodos}</small>
                   <span className="absolute bottom-1.5 right-1 flex gap-0.5 sm:right-2">
                     {statusDots.filter((status) => entry[status.key]).map((status) => <span key={status.key} title={status.label} className={cn("size-1.5 rounded-full ring-1 ring-white/60", status.color)}><span className="sr-only">{status.label}</span></span>)}

@@ -43,3 +43,23 @@ test("rejects unsafe nodes, links, images, and oversized bodies", () => {
 test("empty thoughts and text-only previews do not invent a thumbnail", () => {
   assert.deepEqual(thoughtPreview(thoughtContentSchema.parse(EMPTY_THOUGHT)), { thumbnail: null, excerpt: "" });
 });
+
+test("normalizes ProseMirror attribute objects for Server Action transport", () => {
+  const linkAttrs = Object.assign(Object.create(null), { href: "https://example.com", target: "_blank" });
+  const imageAttrs = Object.assign(Object.create(null), { src: image, alt: "My image", title: null });
+  const parsed = thoughtContentSchema.parse({ type: "doc", content: [
+    { type: "paragraph", content: [{ type: "text", text: "Link", marks: [{ type: "link", attrs: linkAttrs }] }] },
+    { type: "image", attrs: imageAttrs },
+  ] });
+  const paragraph = parsed.content[0];
+  assert.equal(paragraph.type, "paragraph");
+  if (paragraph.type === "paragraph") {
+    const text = paragraph.content?.[0];
+    const link = text?.type === "text" ? text.marks?.[0] : undefined;
+    assert.equal(link?.type, "link");
+    if (link?.type === "link") assert.equal(Object.getPrototypeOf(link.attrs), Object.prototype);
+  }
+  const photo = parsed.content[1];
+  if (photo.type === "image") assert.equal(Object.getPrototypeOf(photo.attrs), Object.prototype);
+  assert.deepEqual(JSON.parse(JSON.stringify(parsed)), parsed);
+});
