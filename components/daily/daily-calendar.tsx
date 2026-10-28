@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { JournalForm } from "@/components/daily/journal-form";
 import { formatDisplayDate } from "@/lib/date";
 import { cn } from "@/lib/utils";
-import { moods, type Mood } from "@/components/daily/mood-picker";
+import { MoodPicker, type Mood } from "@/components/daily/mood-picker";
 
 import type { DailyCalendarEntry as Entry } from "@/lib/data/daily";
 
@@ -51,7 +51,6 @@ export function DailyCalendar({ firstUsedDate, today, entries }: { firstUsedDate
           if (!day) return <div key={`empty-${index}`} />;
           const date = `${month}-${String(day).padStart(2, "0")}`;
           const entry = lookup.get(date) ?? { date, mood: "FLAT" as Mood, journal: "", totalTodos: 0, completedTodos: 0, isFasting: false, isSick: false, isRedDay: false };
-          const mood = moods.find((item) => item.value === entry.mood)!;
           const disabled = date < firstUsedDate || date > today;
           return (
             <Dialog.Root key={date}>
@@ -68,7 +67,7 @@ export function DailyCalendar({ firstUsedDate, today, entries }: { firstUsedDate
                 <Dialog.Content className="fixed left-1/2 top-1/2 z-50 max-h-[90dvh] w-[min(92vw,500px)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-[1.75rem] border border-white/70 bg-background/95 p-6 text-center shadow-[0_28px_80px_rgba(44,38,59,0.22)] backdrop-blur-xl dark:border-white/10">
                   <Dialog.Title className="sr-only">Daily entry for {formatDisplayDate(date)}</Dialog.Title>
                   <Dialog.Description className="sr-only">Mood and journal detail</Dialog.Description>
-                  <span className={cn("mx-auto grid size-20 place-items-center rounded-[1.6rem] text-5xl", mood.className)} aria-label={`${mood.label} mood`}>{mood.emoji}</span>
+                  <div className="pt-8"><MoodPicker key={date} date={date} initialMood={entry.mood} /></div>
                   <p className="mt-4 font-heading text-xl font-semibold">{formatDisplayDate(date)}</p>
                   {date < today ? (
                     <div className="mt-4 text-left">

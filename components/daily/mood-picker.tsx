@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { setMood } from "@/actions/daily";
@@ -16,6 +17,7 @@ export const moods: { value: Mood; emoji: string; label: string; className: stri
 ];
 
 export function MoodPicker({ date, initialMood, compact = false }: { date: string; initialMood: Mood; compact?: boolean }) {
+  const router = useRouter();
   const [selected, setSelected] = useState(initialMood);
   const [pending, startTransition] = useTransition();
 
@@ -23,18 +25,24 @@ export function MoodPicker({ date, initialMood, compact = false }: { date: strin
     const previous = selected;
     setSelected(mood);
     startTransition(async () => {
-      const result = await setMood(date, mood);
-      if (!result.ok) {
-        setSelected(previous);
-        toast.error(result.error);
-      } else {
+      try {
+        const result = await setMood(date, mood);
+        if (!result.ok) {
+          setSelected(previous);
+          toast.error(result.error);
+          return;
+        }
         toast.success("Mood updated");
+        router.refresh();
+      } catch {
+        setSelected(previous);
+        toast.error("Unable to save mood. Please try again.");
       }
     });
   }
 
   return (
-    <div className={cn("grid grid-cols-4 gap-2 sm:gap-3", pending && "opacity-80")} aria-label="Choose today's mood">
+    <div className={cn("grid grid-cols-4 gap-2 sm:gap-3", pending && "opacity-80")} role="group" aria-label="Choose mood for this day">
       {moods.map((mood) => (
         <button
           key={mood.value}
